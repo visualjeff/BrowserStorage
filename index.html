@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>React starter app</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+<script>
+var _hasLocalStorageSupport = (function () {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  }
+  catch (e) {
+    return false;
+  }
+})();
+
+
+var BrowserStorage = storageFunction();      
+
+function storageFunction() {
+  var _readCookie = function (name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ')
+                    c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0)
+                    return decodeURIComponent(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        };
+        var _writeCookie = function (name, value, days) {
+            var expiration = (function () {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    return "; expires=" + date.toGMTString();
+                }
+                else {
+                    return "";
+                }
+            })();
+            document.cookie = name + "=" + encodeURIComponent(value) + expiration + ";path=/";
+        };
+        return {
+            set: function (name, value, days) {
+                _hasLocalStorageSupport
+                    ? localStorage.setItem(name, value)
+                    : _writeCookie(name, value, days);
+            },
+            get: function (name) {
+                return _hasLocalStorageSupport
+                    ? localStorage.getItem(name)
+                    : _readCookie(name);
+            },
+            remove: function (name) {
+                _hasLocalStorageSupport
+                    ? localStorage.removeItem(name)
+                    : this.set(name, "", -1);
+            }
+        };
+    };
+
+//alert(_hasLocalStorageSupport);
+
+//Simple test...
+BrowserStorage.set('sampleArray', '[{"id":"970c8605ace78054f40efe7bc552fc94","date":"2019-12-20T18:58:46.869Z"},{"id":"682fa12e22124e89aec6d6002a60ce38","date":"2019-12-20T18:59:20.850Z"}]', 180);
+
+var result = BrowserStorage.get('sampleArray');
+console.log('sampleArray: ' + result);
+
+BrowserStorage.remove('sampleArray');
+
+</script>
+<body>
+</body>
+</html>
